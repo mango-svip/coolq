@@ -8,8 +8,10 @@ import (
     "net/url"
     "strconv"
     "strings"
+    "time"
 
     "github.com/Tnze/CoolQ-Golang-SDK/cqp"
+    "github.com/robfig/cron"
 )
 
 //go:generate cqcfg -c .
@@ -21,12 +23,15 @@ func main() { /*此处应当留空*/ }
 
 var (
     loginQQ = ""
+    c *cron.Cron
 )
 
 func init() {
     cqp.AppID = "cshare.site.demo"
     cqp.PrivateMsg = onPrivateMsg
     cqp.GroupMsg = onGroupMsg
+    c = cron.New()
+    ScheduleSend()
 }
 
 func onPrivateMsg(subType, msgID int32, fromQQ int64, msg string, font int32) int32 {
@@ -82,4 +87,14 @@ func Robot(msg string) interface{} {
     respMap := make(map[string]interface{})
     _ = json.Unmarshal(bytes, &respMap)
     return respMap["content"]
+}
+
+func ScheduleSend() {
+    _ = c.AddFunc("0 0 * * * ? ", func() {
+
+        cqp.SendGroupMsg(55096232, fmt.Sprintf("准点报时：%s", time.Now().Format("15:04:05")))
+
+    })
+
+    c.Start()
 }
