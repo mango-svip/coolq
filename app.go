@@ -90,7 +90,7 @@ func Robot(msg string) interface{} {
 }
 
 func ScheduleSend() {
-    _ = c.AddFunc("0 0 * * * ? ", func() {
+    _ = c.AddFunc("0 0 8-23 * * ? ", func() {
 
         cqp.SendGroupMsg(55096232, fmt.Sprintf("准点报时：%s", time.Now().Format("15:04:05")))
 
